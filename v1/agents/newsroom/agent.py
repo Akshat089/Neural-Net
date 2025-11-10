@@ -200,8 +200,8 @@ class NewsroomAgent(BaseAgent):
             )
 
         synthesis_prompt = f"""You are the Research_Analyst.
-Digest the sourced snippets below into 4 bullet findings with [S#] references
-and call out any contradictory signals.
+        Digest the sourced snippets below into 4 bullet findings with [S#] references
+        and call out any contradictory signals.
 
 Sources:
 {chr(10).join(formatted_sources)}
@@ -256,23 +256,23 @@ Research Digest:
         for modality in state.get("modalities", []):
             recipe = self.modality_recipes[modality]
             drafting_prompt = f"""Role: {recipe['persona']}
-Brief: {state.get('brief')}
-Topic: {state.get('topic')}
-Audience: {state.get('audience')}
-Tone: {state.get('tone')}
-Research Findings:
-{state.get('research_digest','')}
+            Brief: {state.get('brief')}
+            Topic: {state.get('topic')}
+            Audience: {state.get('audience')}
+            Tone: {state.get('tone')}
+            Research Findings:
+            {state.get('research_digest','')}
 
-Approved Outline:
-{state.get('outline','')}
+            Approved Outline:
+            {state.get('outline','')}
 
-Modality Instructions:
-{recipe['template']}
+            Modality Instructions:
+            {recipe['template']}
 
-Reference Example:
-{recipe['example']}
+            Reference Example:
+            {recipe['example']}
 
-Deliver the final {recipe['label']} now. Maintain [S#] markers when citing.
+            Deliver the final {recipe['label']} now. Maintain [S#] markers when citing.
 """
             response = self.model.invoke(
                 [
@@ -311,4 +311,3 @@ Deliver the final {recipe['label']} now. Maintain [S#] markers when citing.
             "metadata": {"package": package, "handler": "newsroom"},
             "package": package,
         }
-
