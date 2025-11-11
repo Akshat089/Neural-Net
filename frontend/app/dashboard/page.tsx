@@ -1,25 +1,52 @@
 "use client";
-import React, { useState } from "react";
-import PromptForm from "@/app/components/generate/PromptForm";
+import React, { useState, useCallback } from "react";
+import Sidebar from "../components/generate/Sidebar";
+import Header from "../components/generate/Header";
+import BlogWorkflowPage from "../components/generate/BlogWorkflowPage";
+import NewsRoomWorkflowPage from "../components/generate/NewsRoomWorkflowpage";
+import PlaceholderPage from "../components/generate/PlaceholderPage";
 
-export default function Dashboard() {
-  const [prompt, setPrompt] = useState("");
+const Dashboard: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState("blog");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleSubmit = () => {
-    console.log("Prompt submitted:", prompt);
-    // You can later send this to your backend via fetch()
+  const handleNavigate = useCallback((pageId: string) => {
+    setCurrentPage(pageId);
+  }, []);
+
+  const handleToggleSidebar = useCallback(() => {
+    setIsSidebarOpen((prev) => !prev);
+  }, []);
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case "blog":
+        return <BlogWorkflowPage />;
+      case "newsroom":
+        return <NewsRoomWorkflowPage />;
+      default:
+        return <PlaceholderPage page={currentPage} />;
+      
+    }
   };
 
   return (
-    <div className="p-4">
-      <h3 className="mb-3">Dashboard</h3>
-
-      {/* Prompt input area */}
-      <PromptForm prompt={prompt} setPrompt={setPrompt} />
-
-      <button className="btn btn-primary mt-3" onClick={handleSubmit}>
-        Submit
-      </button>
+    <div className="min-h-screen flex bg-gray-900 font-sans">
+      <Header
+        onToggleSidebar={handleToggleSidebar}
+        currentPage={currentPage}
+      />
+      <Sidebar
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={handleToggleSidebar}
+      />
+      <main className="flex-1 overflow-y-auto pt-16 md:pt-0">
+        <div className="w-full min-h-full">{renderPage()}</div>
+      </main>
     </div>
   );
-}
+};
+
+export default Dashboard;
