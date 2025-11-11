@@ -1,61 +1,16 @@
 "use client";
 import React, { useState } from "react";
+// Import your styles
 import "./styles/homepage.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useRouter } from "next/navigation";
+
+// Import the new components from the correct location
+import LoginForm from "./components/auth/LoginForm";
+import SignUpForm from "./components/auth/SignUpForm";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter();
-
-  const BACKEND_URL =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: name, email, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage(`✅ ${data.message}`);
-        setName("");
-        setEmail("");
-        setPassword("");
-      } else {
-        setMessage(`❌ ${data.error}`);
-      }
-    } catch (err: any) {
-      setMessage(`⚠️ Network error: ${err.message}`);
-    }
-  };
-
-  const loginHandle = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage(`✅ ${data.message}`);
-        router.push("/dashboard");
-      } else {
-        setMessage(`❌ ${data.error}`);
-      }
-    } catch (err: any) {
-      setMessage(`⚠️ Network error: ${err.message}`);
-    }
-  };
 
   return (
     <div className="login-page">
@@ -68,7 +23,10 @@ export default function HomePage() {
           <li className="nav-item">
             <button
               className={`nav-link ${activeTab === "login" ? "active" : ""}`}
-              onClick={() => setActiveTab("login")}
+              onClick={() => {
+                setActiveTab("login");
+                setMessage(""); // Clear message on tab switch
+              }}
             >
               Sign In
             </button>
@@ -76,7 +34,10 @@ export default function HomePage() {
           <li className="nav-item">
             <button
               className={`nav-link ${activeTab === "signup" ? "active" : ""}`}
-              onClick={() => setActiveTab("signup")}
+              onClick={() => {
+                setActiveTab("signup");
+                setMessage(""); // Clear message on tab switch
+              }}
             >
               Sign Up
             </button>
@@ -87,70 +48,26 @@ export default function HomePage() {
           className="card mt-4 p-4 shadow-sm mx-auto"
           style={{ maxWidth: "600px" }}
         >
+          {/* Display the message if it exists */}
+          {message && (
+            <div
+              className={`alert ${
+                message.startsWith("✅") ? "alert-success" : "alert-danger"
+              }`}
+              role="alert"
+            >
+              {message}
+            </div>
+          )}
+
+          {/* Conditionally render the correct form component.
+            We pass the `setMessage` function as a prop so the 
+            child components can set the message.
+          */}
           {activeTab === "login" ? (
-            <form onSubmit={loginHandle}>
-              <h3 className="text-center mb-3">Sign In</h3>
-              <div className="mb-3">
-                <label className="text-start d-block">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="text-start d-block">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button type="submit" className="btn btn-primary w-100">
-                Sign In
-              </button>
-            </form>
+            <LoginForm setMessage={setMessage} />
           ) : (
-            <form onSubmit={handleSignUp}>
-              <h3 className="text-center mb-3">Sign Up</h3>
-              <div className="mb-3">
-                <label className="text-start d-block">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="text-start d-block">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="text-start d-block">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button type="submit" className="btn btn-success w-100">
-                Sign Up
-              </button>
-            </form>
+            <SignUpForm setMessage={setMessage} />
           )}
         </div>
       </div>
