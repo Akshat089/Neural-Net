@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../styling/dashboard.css"; // We will create this file next
+import "../styles/dashboard.css"; // We will create this file next
 
 // Define your initial set of available tags
 const ALL_TAGS = [
