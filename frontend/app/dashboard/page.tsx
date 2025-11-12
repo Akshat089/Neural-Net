@@ -5,6 +5,7 @@ import Header from "../components/generate/Header";
 import BlogWorkflowPage from "../components/templates/BlogWorkflowPage";
 import NewsRoomWorkflowPage from "../components/templates/NewsRoomWorkflowpage";
 import PlaceholderPage from "../components/templates/PlaceholderPage";
+import ContentPage from "../components/templates/ContentPage";
 
 const Dashboard: React.FC = () => {
   const [currentPage, setCurrentPage] = useState("blog");
@@ -26,7 +27,8 @@ const Dashboard: React.FC = () => {
         return <NewsRoomWorkflowPage />;
       default:
         return <PlaceholderPage page={currentPage} />;
-      
+      case "content":
+        return <ContentPage />;
     }
   };
 

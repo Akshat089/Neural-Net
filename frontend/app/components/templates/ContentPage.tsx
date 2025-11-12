@@ -10,7 +10,7 @@ const ALL_CHANNELS: Modality[] = [
   { name: "linkedin" },
 ];
 
-const NewsRoomWorkflowPage: React.FC = () => {
+const ContentPage: React.FC = () => {
   const [formData, setFormData] = useState({
     brandVoice:
       "We're an eco-friendly lifestyle brand that balances science with heart. Write like a caring friend who knows sustainability, deeply.",
@@ -51,7 +51,7 @@ const NewsRoomWorkflowPage: React.FC = () => {
 
     try {
       const res = await fetch(
-        process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL + "/generate-content",
+        process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL + "/generate-news",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -167,4 +167,4 @@ const NewsRoomWorkflowPage: React.FC = () => {
   );
 };
 
-export default NewsRoomWorkflowPage;
+export default ContentPage;
