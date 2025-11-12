@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-// Define the props the component will accept (a function to set the message)
 interface LoginFormProps {
   setMessage: (message: string) => void;
 }
@@ -12,17 +11,20 @@ export default function LoginForm({ setMessage }: LoginFormProps) {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const BACKEND_URL =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
-
+  // ✅ since auth now lives inside /app/api/auth/route.ts, no need for external backend URL
   const loginHandle = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          action: "login", // ✅ required in the new unified route
+          email,
+          password,
+        }),
       });
+
       const data = await res.json();
       if (res.ok) {
         setMessage(`✅ ${data.message}`);
