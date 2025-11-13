@@ -1,22 +1,21 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
-router = APIRouter()
+router = APIRouter(tags=["Blog"])
 
 @router.post("/generate-blog")
 async def generate_blog(request: Request):
-    data = await request.json()
+    """Temporary dummy endpoint — just echoes back the received data."""
+    try:
+        payload = await request.json()
+        print("Received payload:", payload)  # Debugging log
 
-    # Extract form inputs (just for dummy print)
-    topic = data.get("prompt") or "Untitled Topic"
-    brief = data.get("existingDraft") or ""
-    word_count = data.get("mediumWordCount") or 500
-    tone = "friendly"
-    audience = "general readers"
+        # Return exactly what frontend sent
+        return {
+            "generated_blog": f"Dummy blog for topic '{payload.get('prompt', 'N/A')}' "
+                      f"with {payload.get('mediumWordCount', 'N/A')} words.",
+            "received_data": payload
+        }
 
-    # Dummy print to console
-    print("Received request data:", data)
 
-    # Dummy output
-    return {
-        "generated_blog": f"Dummy blog for topic '{topic}' with {word_count} words in {tone} tone."
-    }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

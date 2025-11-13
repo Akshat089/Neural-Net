@@ -24,11 +24,11 @@ const ALL_CHANNELS: Modality[] = [
 const BlogWorkflowPage: React.FC = () => {
   const [formData, setFormData] = useState({
     brandVoice:
-      "We're an eco-friendly lifestyle brand that balances science with heart. Write like a caring friend who knows sustainability, deeply.",
+      "",
     prompt:
-      "Announce our new plastic-free shampoo bar with a focus on how it conserves water.",
+      "",
     existingDraft:
-      "Try our new bar! It's zero-waste and lasts longer. It has no sulphates, and uses chemicals that aren't too hard on new!",
+      "",
     // 💡 FIX 1: The modalities state should be an array of names (strings) for easy API submission.
     modalities: [
       "madGum", // Previously active
@@ -64,8 +64,10 @@ const BlogWorkflowPage: React.FC = () => {
 
     try {
       const res = await fetch(
+        
         process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL + "/generate-blog",
         {
+          
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -74,6 +76,7 @@ const BlogWorkflowPage: React.FC = () => {
       const data = await res.json();
       setResult(data.generated_blog);
     } catch (error) {
+      console.log(process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL);
       console.error("Error:", error);
       setResult("⚠️ Failed to connect to backend");
     } finally {

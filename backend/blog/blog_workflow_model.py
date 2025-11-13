@@ -1,165 +1,212 @@
-from typing import Dict, Any, Type
+from typing import Dict, Any
 from langgraph.graph import StateGraph, START, END
 from pydantic import BaseModel, Field
 from groq import Groq
-# from langgraph.runners import GraphRunner
+from dotenv import load_dotenv
 
-import os
+load_dotenv()
 
 # -------------------------------
 # Initialize Groq client
 # -------------------------------
-client = Groq()  # Make sure GROQ_API_KEY is set in environment
+client = Groq()  # Uses GROQ_API_KEY from environment
 
-def generate(prompt: str, max_tokens=512) -> str:
+def generate(prompt: str, max_tokens=512, temperature=0.7) -> str:
     """Use Groq API to generate text from prompt."""
     completion = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
+        temperature=temperature,
         max_completion_tokens=max_tokens,
         top_p=1,
         stream=False,
-        stop=None
     )
-    return completion.choices[0].message.content
+    return completion.choices[0].message.content.strip()
+
 
 # -------------------------------
 # State Schema
 # -------------------------------
 class BlogState(BaseModel):
-    messages: list = Field(default_factory=list)
-    topic: str = "The Future of Remote Work"
-    brief: str = ""
-    word_count: int = 1000
-    tone: str = "pragmatic"
-    audience: str = "business decision makers"
-    plan: str = None
-    research_notes: str = None
-    draft: str = None
-    compliance_report: str = None
-    revision_notes: str = None
-    social_assets: str = None
-    hero_prompt: str = None
+    # 🧠 Input from frontend
+    brand_name: str = ""
+    brand_voice: str = ""
+    prompt: str = ""
+    tone: str = ""
+    audience: str = ""
+    modalities: Dict[str, int] = Field(default_factory=dict)  # {"medium": 600, "linkedin": 200}
+
+    # 🔄 Workflow-generated fields
+    brand_history: str | None = None
+    research_notes: str | None = None
+    blog_draft: str | None = None
+    compliance_report: str | None = None
+    revision_notes: str | None = None
+    social_assets: Dict[str, str] | None = None
     revision_count: int = 0
 
-# -------------------------------
-# Node Implementations (use Groq)
-# -------------------------------
-def project_plan(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are a Project Manager. Based on the topic, create a 4-step blog production plan.
-Topic: {state.topic}
-Tone: {state.tone}
-Audience: {state.audience}
-Word count: {state.word_count}
-Brief: {state.brief}"""
-    return {"plan": generate(prompt, 256)}
 
-def strategy_research(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are a Research Strategist. List 3-4 credible findings or stats about {state.topic}.
-Each should include short source-style attributions."""
-    return {"research_notes": generate(prompt, 256)}
+# -------------------------------
+# Nodes
+# -------------------------------
+
+def brand_context_research(state: BlogState) -> Dict[str, Any]:
+    """Step 1: Research brand history and tone context."""
+    prompt = f"""
+You are a Brand Analyst.
+
+Research and summarize the brand **{state.brand_name}**.
+
+Return sections:
+- Brand Voice Summary
+- Past Campaigns & History
+- Recurring Themes
+- Tone & Audience Insights
+- Alignment Recommendations
+"""
+    return {"brand_history": generate(prompt, 512)}
+
+
+def topic_research(state: BlogState) -> Dict[str, Any]:
+    """Step 2: Research credible findings for the given prompt/topic."""
+    prompt = f"""
+You are a Research Strategist.
+
+List 3–4 credible findings, trends, or statistics related to the topic:
+"{state.prompt}"
+
+Each item should include a short source-style attribution.
+"""
+    return {"research_notes": generate(prompt, 512)}
+
 
 def draft_blog(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are a Copywriter. Write a ~{state.word_count}-word blog on the topic '{state.topic}'.
+    """Step 3: Generate the main blog draft aligned with brand voice and history."""
+    medium_word_count = state.modalities.get("medium", 600)
+
+    prompt = f"""
+You are a Senior Brand Copywriter.
+
+Write a {medium_word_count}-word blog post about:
+"{state.prompt}"
+
+Brand: {state.brand_name}
 Tone: {state.tone}
 Audience: {state.audience}
-Include the following research:
+
+Brand Voice:
+{state.brand_voice}
+
+Brand History:
+{state.brand_history}
+
+Research Insights:
 {state.research_notes}
-Format in Markdown with introduction, body (3 sections), and conclusion."""
-    return {"draft": generate(prompt, 512)}
+
+Guidelines:
+- Keep the writing aligned with the brand’s history and ethics.
+- Use Markdown formatting with headings.
+- Structure: Introduction, 3 core sections, and a conclusion.
+"""
+    return {"blog_draft": generate(prompt, 1024)}
+
 
 def compliance_review(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are the Compliance Reviewer (brand + legal + factual accuracy).
-Review the following blog and return JSON with keys:
-status (approve or revise), notes, flagged_sections.
-Blog draft:
-{state.draft}"""
-    return {"compliance_report": generate(prompt, 256)}
+    """Step 4: Check compliance for tone, factual accuracy, and brand alignment."""
+    prompt = f"""
+You are the Brand Compliance Reviewer.
 
-def editor_feedback(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are an Editor. Summarize the compliance concerns and write revision notes for the writer.
-Compliance report:
-{state.compliance_report}"""
-    return {"revision_notes": generate(prompt, 256), "revision_count": state.revision_count + 1}
+Check the following blog for:
+- Accuracy of claims
+- Brand alignment with {state.brand_name}'s tone
+- Ethical and factual soundness
+- Readability for {state.audience}
 
-def repurpose_assets(state: BlogState) -> Dict[str, Any]:
-    prompt = f"""You are a Social Media Strategist. From this blog, generate:
-1. Three tweets highlighting different key ideas.
-2. One LinkedIn post summary (<= 4 paragraphs).
-3. A one-sentence hero image prompt.
 Blog:
-{state.draft}"""
-    return {"social_assets": generate(prompt, 256),
-            "hero_prompt": "A futuristic workspace with holographic meeting displays."}
+{state.blog_draft}
+
+Return a report (in plain English) that includes:
+- Verdict: APPROVED or REVISION_NEEDED
+- Key observations
+- If revisions needed, list what to improve
+"""
+    return {"compliance_report": generate(prompt, 512)}
+
+
+def revision_step(state: BlogState) -> Dict[str, Any]:
+    """Step 5: Revise the blog if compliance suggests improvement."""
+    if not state.compliance_report or "APPROVED" in state.compliance_report.upper():
+        return {"revision_notes": "No revision required."}
+
+    prompt = f"""
+You are an Editor revising a blog based on compliance feedback.
+
+Original Blog:
+{state.blog_draft}
+
+Compliance Feedback:
+{state.compliance_report}
+
+Task:
+Revise the blog to address the feedback while preserving the brand voice.
+"""
+    return {
+        "revision_notes": generate(prompt, 512),
+        "revision_count": state.revision_count + 1,
+        "blog_draft": generate(prompt, 1024)
+    }
+
+
+def repurpose_social_assets(state: BlogState) -> Dict[str, Any]:
+    """Step 6: Generate social media versions dynamically."""
+    if not state.modalities:
+        return {"social_assets": {}}
+
+    assets = {}
+    for platform, word_count in state.modalities.items():
+        prompt = f"""
+You are a Social Media Strategist.
+
+Based on the following blog:
+{state.blog_draft}
+
+Create a post for **{platform}** (~{word_count} words) that:
+- Matches {platform}'s style and tone
+- Is consistent with the brand's values and history
+- Feels native to that platform
+"""
+        assets[platform] = generate(prompt, 512)
+    return {"social_assets": assets}
+
 
 def finalize_package(state: BlogState) -> Dict[str, Any]:
-    return {"response": "✅ Blog package ready: includes plan, research, draft, compliance, social assets."}
+    """Final step – summarize completion."""
+    return {"response": "✅ Blog workflow completed successfully with compliance review and social assets."}
+
 
 # -------------------------------
-# Conditional routing
-# -------------------------------
-def route_after_compliance(state: BlogState) -> str:
-    text = (state.compliance_report or "").lower()
-    if "revise" in text or "flag" in text:
-        return "editor_feedback"
-    return "repurpose_assets"
-
-# -------------------------------
-# Build the workflow graph
+# Build the Graph
 # -------------------------------
 def build_blog_graph() -> StateGraph:
     graph = StateGraph(BlogState)
 
-    graph.add_node("project_plan", project_plan)
-    graph.add_node("strategy_research", strategy_research)
+    graph.add_node("brand_context_research", brand_context_research)
+    graph.add_node("topic_research", topic_research)
     graph.add_node("draft_blog", draft_blog)
     graph.add_node("compliance_review", compliance_review)
-    graph.add_node("editor_feedback", editor_feedback)
-    graph.add_node("repurpose_assets", repurpose_assets)
+    graph.add_node("revision_step", revision_step)
+    graph.add_node("repurpose_social_assets", repurpose_social_assets)
     graph.add_node("finalize_package", finalize_package)
 
-    graph.add_edge(START, "project_plan")
-    graph.add_edge("project_plan", "strategy_research")
-    graph.add_edge("strategy_research", "draft_blog")
+    graph.add_edge(START, "brand_context_research")
+    graph.add_edge("brand_context_research", "topic_research")
+    graph.add_edge("topic_research", "draft_blog")
     graph.add_edge("draft_blog", "compliance_review")
-
-    graph.add_conditional_edges(
-        "compliance_review",
-        route_after_compliance,
-        {
-            "editor_feedback": "draft_blog",
-            "repurpose_assets": "repurpose_assets",
-        },
-    )
-
-    graph.add_edge("repurpose_assets", "finalize_package")
+    graph.add_edge("compliance_review", "revision_step")
+    graph.add_edge("revision_step", "repurpose_social_assets")
+    graph.add_edge("repurpose_social_assets", "finalize_package")
     graph.add_edge("finalize_package", END)
 
     return graph
 
-# -------------------------------
-# Example run (for testing)
-# -------------------------------
-if __name__ == "__main__":
-    state = BlogState(topic="AI in Education", brief="Discuss how AI tools enhance learning.")
 
-    state.plan = project_plan(state)["plan"]
-    state.research_notes = strategy_research(state)["research_notes"]
-    state.draft = draft_blog(state)["draft"]
-    state.compliance_report = compliance_review(state)["compliance_report"]
-
-    # Decide next node manually
-    if "revise" in (state.compliance_report or "").lower():
-        state.revision_notes = editor_feedback(state)["revision_notes"]
-        state.revision_count += 1
-        state.draft = draft_blog(state)["draft"]
-
-    state.social_assets, state.hero_prompt = repurpose_assets(state)["social_assets"], repurpose_assets(state)["hero_prompt"]
-    summary = finalize_package(state)["response"]
-
-    print("\n--- FINAL OUTPUT ---")
-    print(f"Draft: {state.draft}")
-    print(f"Social Assets: {state.social_assets}")
-    print(f"Hero Prompt: {state.hero_prompt}")
-    print(summary)
