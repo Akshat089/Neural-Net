@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/generate/Header";
 import BlogWorkflowPage from "../components/templates/BlogWorkflowPage";
+import GeneratedImagesPage from "../components/templates/GeneratedImagesPage";
 import NewsRoomWorkflowPage from "../components/templates/NewsRoomWorkflowpage";
 import PlaceholderPage from "../components/templates/PlaceholderPage";
 import ContentPage from "../components/templates/ContentPage";
@@ -67,6 +68,8 @@ const Dashboard: React.FC = () => {
         return <NewsRoomWorkflowPage />;
       case "content":
         return <ContentRepurposerPage />;
+      case "image_library":
+        return <GeneratedImagesPage />;
       case "youtube_blog":
         return <YouTubeBlogPage />;
       default:

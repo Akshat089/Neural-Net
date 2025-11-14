@@ -11,6 +11,7 @@ import {
   Home,
   Zap,
   Youtube,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -38,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "newsroom", label: "Newsroom", icon: Newspaper },
     { id: "blog", label: "Blog", icon: FileText },
     { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
+    { id: "image_library", label: "Image Library", icon: ImageIcon },
   ];
 
   return (
