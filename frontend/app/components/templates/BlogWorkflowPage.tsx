@@ -66,7 +66,7 @@ const BlogWorkflowPage: React.FC = () => {
       const tid = data.threadId;
       // const formattedBlog = data?.data?.formatted_blog ?? "⚠️ No content generated";
       setResult(data.generated_blog);
-      
+
       // Save blog to DB (optional)
       try {
         await fetch("/api/save-blog", {
@@ -92,11 +92,19 @@ const BlogWorkflowPage: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 md:p-10 text-white max-w-4xl mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 md:p-10 text-white max-w-4xl mx-auto"
+    >
       <h1 className="text-3xl font-bold mb-2">
-        Dashboard / Blog Workflow <span className="text-gray-400 font-normal text-xl">/generate_blog</span>
+        Dashboard / Blog Workflow{" "}
+        <span className="text-gray-400 font-normal text-xl">
+          /generate_blog
+        </span>
       </h1>
-      <p className="text-gray-400 mb-8">Create branded multi-platform blog posts using your agent.</p>
+      <p className="text-gray-400 mb-8">
+        Create branded multi-platform blog posts using your agent.
+      </p>
 
       <InputCard title="Brand / Voice">
         <TextInput
@@ -131,11 +139,14 @@ const BlogWorkflowPage: React.FC = () => {
       <InputCard title="Word Counts per Modality">
         {formData.modalities.map((modality) => {
           const key = `${modality}WordCount` as keyof typeof formData;
-          const value = typeof formData[key] === "number" ? (formData[key] as number) : 0;
+          const value =
+            typeof formData[key] === "number" ? (formData[key] as number) : 0;
           return (
             <WordCountInput
               key={modality}
-              label={`${modality.charAt(0).toUpperCase() + modality.slice(1)} word count`}
+              label={`${
+                modality.charAt(0).toUpperCase() + modality.slice(1)
+              } word count`}
               value={value}
               onChange={(val) => handleChange(key, val)}
             />
