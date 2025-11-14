@@ -346,6 +346,7 @@ const ResultsDisplay: React.FC<{ results: RepurposeResults }> = ({
         <nav className="flex -mb-px p-4" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`mr-4 py-2 px-4 font-medium text-sm rounded-lg transition-colors ${
