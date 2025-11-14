@@ -15,10 +15,8 @@ async def main():
         "tone": "informative",
         "audience": "tech professionals",
         "modalities": {
-            "medium": 600,
+            "medium": 200,
             "linkedin": 200,
-            "twitter": 100,
-            "threads": 150
         }
     }
 

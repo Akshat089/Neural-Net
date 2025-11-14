@@ -1,13 +1,11 @@
 "use client";
 import React, { useState, useCallback } from "react";
-// Assuming paths are correct
 import InputCard from "../generate/InputCard";
 import TextInput from "../generate/TextInput";
-import ModalitySelector, { Modality } from "../generate/ModalitySelector"; // Import the updated component
+import ModalitySelector, { Modality } from "../generate/ModalitySelector";
 import WordCountInput from "../generate/WordCountInput";
 import { Lightbulb } from "lucide-react";
 
-// Define the full list of available channels to pass to the selector
 const ALL_CHANNELS: Modality[] = [
   { name: "medium" },
   { name: "linkedin" },
@@ -17,20 +15,12 @@ const ALL_CHANNELS: Modality[] = [
   { name: "instagram" },
 ];
 
-
 const BlogWorkflowPage: React.FC = () => {
   const [formData, setFormData] = useState({
-    brandVoice:
-      "",
-    prompt:
-      "",
-    existingDraft:
-      "",
-    // 💡 FIX 1: The modalities state should be an array of names (strings) for easy API submission.
-    modalities: [
-      "medium", // Previously active
-      "linkedin", // Adding a channel to start with
-    ] as string[], // Now stores only the selected NAMES
+    brandVoice: "",
+    prompt: "",
+    existingDraft: "",
+    modalities: ["medium", "linkedin"] as string[],
     mediumWordCount: 600,
     linkedinWordCount: 200,
     tone: "",
@@ -48,11 +38,10 @@ const BlogWorkflowPage: React.FC = () => {
     []
   );
 
-  // 💡 FIX 2: Replaced handleToggleModality with a new handler
   const handleSelectionChange = useCallback((selectedNames: string[]) => {
     setFormData((prev) => ({
       ...prev,
-      modalities: selectedNames, // Update state with the new array of selected names
+      modalities: selectedNames,
     }));
   }, []);
 
@@ -62,9 +51,9 @@ const BlogWorkflowPage: React.FC = () => {
     setResult(null);
 
     try {
+      // Call backend to generate blog
       const res = await fetch(
-        
-        process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL + "/generate-blog",
+        `${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/generate-blog`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -72,27 +61,29 @@ const BlogWorkflowPage: React.FC = () => {
         }
       );
       const data = await res.json();
-      console.log("Full JSON response from backend:", data); // 👈 log the entire JSON
-      setResult(data.generated_blog); // fallback if key doesn't exist
-      // try {
-      //   await fetch("/api/save-blog", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //   threadId: data.threadId ?? formData.threadId,       // from backend
-      //   result: data.generated_blog ?? "",   // the generated blog text
-      //   url: "",                        // optional, or you can include if any
-      // }),
-      // credentials: "include",          // include cookies for auth
-      // });
-      // console.log("Saved blog to DB successfully");
-      // } catch (err) {
-      //   console.error("Failed to save blog:", err);
-      // }
+      console.log("Full JSON response from backend:", data);
 
+      // const formattedBlog = data?.data?.formatted_blog ?? "⚠️ No content generated";
+      setResult(data.generated_blog);
+
+      // Save blog to DB (optional)
+      try {
+        await fetch("/api/save-blog", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            threadId: data.thread,
+            result: data.generated_blog,
+            url: "",
+          }),
+          credentials: "include",
+        });
+        console.log("Saved blog to DB successfully");
+      } catch (err) {
+        console.error("Failed to save blog:", err);
+      }
     } catch (error) {
-      console.log(process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL);
-      console.error("Error:", error);
+      console.error("Error connecting to backend:", error);
       setResult("⚠️ Failed to connect to backend");
     } finally {
       setLoading(false);
@@ -100,21 +91,12 @@ const BlogWorkflowPage: React.FC = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-6 md:p-10 text-white max-w-4xl mx-auto"
-    >
+    <form onSubmit={handleSubmit} className="p-6 md:p-10 text-white max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">
-        Dashboard / Blog Workflow{" "}
-        <span className="text-gray-400 font-normal text-xl">
-          /generate_blog
-        </span>
+        Dashboard / Blog Workflow <span className="text-gray-400 font-normal text-xl">/generate_blog</span>
       </h1>
-      <p className="text-gray-400 mb-8">
-        Create branded multi-platform blog posts using your agent.
-      </p>
+      <p className="text-gray-400 mb-8">Create branded multi-platform blog posts using your agent.</p>
 
-      {/* ... other InputCard components ... */}
       <InputCard title="Brand / Voice">
         <TextInput
           label="Define your brand persona and tone."
@@ -138,31 +120,29 @@ const BlogWorkflowPage: React.FC = () => {
           isTextArea
         />
       </InputCard>
-      
-      {/* 💡 FIX 3: Updated ModalitySelector usage */}
+
       <ModalitySelector
-        allChannels={ALL_CHANNELS} // Pass the full list of options
-        preSelectedNames={formData.modalities} // Pass the currently selected names
-        onSelectionChange={handleSelectionChange} // Use the new handler
+        allChannels={ALL_CHANNELS}
+        preSelectedNames={formData.modalities}
+        onSelectionChange={handleSelectionChange}
       />
 
       <InputCard title="Word Counts per Modality">
         {formData.modalities.map((modality) => {
-        // Build the corresponding key dynamically
-        const key = `${modality}WordCount` as keyof typeof formData;
-        const value = typeof formData[key] === "number" ? (formData[key] as number) : 0;
-        return (
-          <WordCountInput
-          key={modality}
-          label={`${modality.charAt(0).toUpperCase() + modality.slice(1)} word count`}
-          value={value}
-          onChange={(val) => handleChange(key, val)}
-        />
-        );
+          const key = `${modality}WordCount` as keyof typeof formData;
+          const value = typeof formData[key] === "number" ? (formData[key] as number) : 0;
+          return (
+            <WordCountInput
+              key={modality}
+              label={`${modality.charAt(0).toUpperCase() + modality.slice(1)} word count`}
+              value={value}
+              onChange={(val) => handleChange(key, val)}
+            />
+          );
         })}
       </InputCard>
 
-      <InputCard title="tone">
+      <InputCard title="Tone">
         <TextInput
           label=""
           value={formData.tone}
@@ -171,7 +151,7 @@ const BlogWorkflowPage: React.FC = () => {
         />
       </InputCard>
 
-      <InputCard title="audience">
+      <InputCard title="Audience">
         <TextInput
           label=""
           value={formData.audience}
@@ -200,7 +180,6 @@ const BlogWorkflowPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Result Section */}
       {result && (
         <div className="mt-10 bg-gray-800 p-6 rounded-xl shadow-lg">
           <h2 className="text-xl font-bold mb-3">Generated Blog Output:</h2>

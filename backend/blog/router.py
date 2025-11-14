@@ -56,7 +56,7 @@ async def generate_blog(request: Request):
         return {
             "status": "success",
             "threadId": thread_id,
-            "generated_blog": result.get("data", {}).get("blog_draft", "No draft generated"),
+            "generated_blog": result.get("data", {}).get("formatted_blog", "No draft generated"),
             "received_data": normalized_payload
         }
 
