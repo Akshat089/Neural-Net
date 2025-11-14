@@ -1,15 +1,11 @@
 "use client";
 import React from "react";
 import {
-  Menu,
   X,
   CheckCircle,
-  MessageSquare,
   Newspaper,
   FileText,
-  Settings,
   Home,
-  Zap,
   Youtube,
   Image as ImageIcon,
 } from "lucide-react";
@@ -28,16 +24,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   onToggleSidebar,
 }) => {
   const navItems = [
-    { id: "streamlit.app", label: "Streamlit.app", icon: Home },
-    { id: "root", label: "Root", icon: FileText },
-    { id: "ping", label: "Ping", icon: Zap },
-    { id: "health", label: "Health", icon: CheckCircle },
-    { id: "agents", label: "Agents", icon: MessageSquare },
-    { id: "chat", label: "Chat", icon: MessageSquare },
-    { id: "content", label: "Content", icon: FileText },
-    { id: "blog_workflow", label: "Blog Workflow", icon: FileText },
+    { id: "home", label: "Home", icon: Home },
+    { id: "blog", label: "Blog Workflow", icon: FileText },
     { id: "newsroom", label: "Newsroom", icon: Newspaper },
-    { id: "blog", label: "Blog", icon: FileText },
+    { id: "content", label: "Content Repurposer", icon: CheckCircle },
     { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
     { id: "image_library", label: "Image Library", icon: ImageIcon },
   ];

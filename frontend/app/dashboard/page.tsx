@@ -14,9 +14,9 @@ import BlogWorkflowPage from "../components/templates/BlogWorkflowPage";
 import GeneratedImagesPage from "../components/templates/GeneratedImagesPage";
 import NewsRoomWorkflowPage from "../components/templates/NewsRoomWorkflowpage";
 import PlaceholderPage from "../components/templates/PlaceholderPage";
-import ContentPage from "../components/templates/ContentPage";
 import ContentRepurposerPage from "../components/templates/ContentRepurposerPage";
 import YouTubeBlogPage from "../components/templates/YouTubeBlogPage";
+import HomePage from "../components/templates/HomePage";
 
 // -------------------
 // Auth Context
@@ -30,7 +30,7 @@ export const useAuth = () => useContext(AuthContext);
 // -------------------
 const Dashboard: React.FC = () => {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState("blog");
+  const [currentPage, setCurrentPage] = useState("home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null); // Logged-in user info
 
@@ -62,6 +62,8 @@ const Dashboard: React.FC = () => {
 
   const renderPage = () => {
     switch (currentPage) {
+      case "home":
+        return <HomePage />;
       case "blog":
         return <BlogWorkflowPage />; // user can be accessed via AuthContext
       case "newsroom":
