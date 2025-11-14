@@ -15,7 +15,9 @@
     "bootstrap": "^5.3.8",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
+    "mammoth": "^1.11.0",
     "next": "16.0.1",
+    "pdfjs-dist": "^5.4.394",
     "prisma": "^6.19.0",
     "react": "19.2.0",
     "react-dom": "19.2.0"

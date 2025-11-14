@@ -1,5 +1,11 @@
 "use client";
-import React, { useState, useCallback, useEffect, createContext, useContext } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  createContext,
+  useContext,
+} from "react";
 import { useRouter } from "next/navigation";
 
 import Sidebar from "../components/dashboard/Sidebar";
@@ -8,6 +14,7 @@ import BlogWorkflowPage from "../components/templates/BlogWorkflowPage";
 import NewsRoomWorkflowPage from "../components/templates/NewsRoomWorkflowpage";
 import PlaceholderPage from "../components/templates/PlaceholderPage";
 import ContentPage from "../components/templates/ContentPage";
+import ContentRepurposerPage from "../components/templates/ContentRepurposerPage";
 
 // -------------------
 // Auth Context
@@ -27,22 +34,21 @@ const Dashboard: React.FC = () => {
 
   // Route protection & fetch user info
   useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const res = await fetch("/api/me", { credentials: "include" });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/me", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        } else {
+          router.push("/");
+        }
+      } catch (err) {
         router.push("/");
       }
-    } catch (err) {
-      router.push("/");
-    }
-  };
-  fetchUser();
-}, [router]);
-
+    };
+    fetchUser();
+  }, [router]);
 
   const handleNavigate = useCallback((pageId: string) => {
     setCurrentPage(pageId);
@@ -59,7 +65,7 @@ const Dashboard: React.FC = () => {
       case "newsroom":
         return <NewsRoomWorkflowPage />;
       case "content":
-        return <ContentPage />;
+        return <ContentRepurposerPage />;
       default:
         return <PlaceholderPage page={currentPage} />;
     }
@@ -71,7 +77,10 @@ const Dashboard: React.FC = () => {
   return (
     <AuthContext.Provider value={user}>
       <div className="min-h-screen flex bg-gray-900 font-sans">
-        <Header onToggleSidebar={handleToggleSidebar} currentPage={currentPage} />
+        <Header
+          onToggleSidebar={handleToggleSidebar}
+          currentPage={currentPage}
+        />
         <Sidebar
           currentPage={currentPage}
           onNavigate={handleNavigate}
