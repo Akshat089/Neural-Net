@@ -14,6 +14,9 @@ class BlogWorkflowAgent:
         self.graph = build_blog_graph()
 
     async def ainvoke(self, input_data: Dict[str, Any], thread_id: str = None):
+        print("=== ainvoke received input_data ===")
+        print(input_data)
+
         """Run the workflow asynchronously (currently synchronous execution)."""
         try:
             # 🧠 Extract input fields from frontend
@@ -35,6 +38,7 @@ class BlogWorkflowAgent:
             if "social_assets" in result and result["social_assets"]:
                 for modality in state.modalities.keys():  # Only include selected modalities
                     content = result["social_assets"].get(modality, "")
+                    print(f"Modality: {modality}, Content: {repr(content)}")
                     formatted_output += f"### {modality}\n{content}\n\n"
 
                 return {
