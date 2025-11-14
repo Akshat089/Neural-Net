@@ -411,7 +411,9 @@ const ContentRepurposerPage: React.FC = () => {
     setFileName(name);
   };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     setArticleText(e.target.value);
     if (fileName) {
       setFileName(null); // Clear file if user starts typing
@@ -488,7 +490,7 @@ const ContentRepurposerPage: React.FC = () => {
         <TextInput
           label="Paste your full article text below:"
           value={articleText}
-          onChange={() => handleTextChange} // This was the bug from the user's code
+          onChange={handleTextChange} // This was the bug from the user's code
           placeholder="Start pasting your article here..."
           isTextArea
           rows={12}
