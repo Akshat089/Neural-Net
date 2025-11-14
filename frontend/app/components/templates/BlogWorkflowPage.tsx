@@ -62,18 +62,19 @@ const BlogWorkflowPage: React.FC = () => {
       );
       const data = await res.json();
       console.log("Full JSON response from backend:", data);
-
+      const format_blog = data.generated_blog;
+      const tid = data.threadId;
       // const formattedBlog = data?.data?.formatted_blog ?? "⚠️ No content generated";
       setResult(data.generated_blog);
-
+      
       // Save blog to DB (optional)
       try {
         await fetch("/api/save-blog", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            threadId: data.thread,
-            result: data.generated_blog,
+            threadId: tid,
+            result: format_blog,
             url: "",
           }),
           credentials: "include",
