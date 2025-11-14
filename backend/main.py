@@ -4,6 +4,7 @@ from blog.router import router as blog_router
 from news.router import router as news_router
 from content.router import router as content_router
 from contentRepurposer.router import router as contentRepurposer_router
+from youtubeBlog.router import router as youtube_router
 
 app = FastAPI()
 
@@ -29,3 +30,4 @@ app.include_router(blog_router)
 app.include_router(news_router)
 app.include_router(content_router)
 app.include_router(contentRepurposer_router)
+app.include_router(youtube_router)

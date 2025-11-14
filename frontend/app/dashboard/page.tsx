@@ -15,6 +15,7 @@ import NewsRoomWorkflowPage from "../components/templates/NewsRoomWorkflowpage";
 import PlaceholderPage from "../components/templates/PlaceholderPage";
 import ContentPage from "../components/templates/ContentPage";
 import ContentRepurposerPage from "../components/templates/ContentRepurposerPage";
+import YouTubeBlogPage from "../components/templates/YouTubeBlogPage";
 
 // -------------------
 // Auth Context
@@ -66,6 +67,8 @@ const Dashboard: React.FC = () => {
         return <NewsRoomWorkflowPage />;
       case "content":
         return <ContentRepurposerPage />;
+      case "youtube_blog":
+        return <YouTubeBlogPage />;
       default:
         return <PlaceholderPage page={currentPage} />;
     }

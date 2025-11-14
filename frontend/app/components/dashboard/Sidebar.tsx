@@ -10,6 +10,7 @@ import {
   Settings,
   Home,
   Zap,
+  Youtube,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,6 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "blog_workflow", label: "Blog Workflow", icon: FileText },
     { id: "newsroom", label: "Newsroom", icon: Newspaper },
     { id: "blog", label: "Blog", icon: FileText },
+    { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
   ];
 
   return (
