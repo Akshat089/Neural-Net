@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import "../styles/homepage.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import LoginForm from "../components/auth/LoginForm";
 import SignUpForm from "../components/auth/SignUpForm";
 
@@ -20,10 +19,7 @@ export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isSuccessMessage = useMemo(
-    () => message.startsWith("✅"),
-    [message]
-  );
+  const isSuccessMessage = useMemo(() => message.startsWith("✅"), [message]);
 
   const clearMessageAndSetTab = useCallback((tab: Tab) => {
     setActiveTab(tab);
@@ -59,7 +55,9 @@ export default function AuthPage() {
   // Sync mode with saved preference
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const saved = window.localStorage.getItem("auth-theme-mode") as ThemeMode | null;
+    const saved = window.localStorage.getItem(
+      "auth-theme-mode"
+    ) as ThemeMode | null;
     if (saved === "light" || saved === "dark" || saved === "system") {
       setThemeMode(saved);
     }

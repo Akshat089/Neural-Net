@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 import {
@@ -49,6 +50,15 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "account", label: "Account & Keys", icon: UserCog },
   ];
 
+  const router = useRouter();
+
+  const handleBackClick = () => {
+    if (isSidebarOpen) {
+      onToggleSidebar();
+    }
+    router.push("/"); // Navigate to the homepage
+  };
+
   return (
     <>
       <div
@@ -78,12 +88,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="p-4 border-b border-gray-800 flex flex-col gap-2">
-          {/* TOP ROW WITH BACK + COLLAPSE BUTTON */}
           <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              onClick={() => isSidebarOpen && onToggleSidebar()}
-              className="flex items-center gap-3 rounded-xl border border-gray-700/60 bg-gray-800/40 px-3 py-2 text-sm font-semibold text-gray-100 shadow-inner shadow-black/20 transition hover:border-purple-400/40 hover:bg-gray-800/70"
+            <button
+              type="button"
+              onClick={handleBackClick}
+              className="flex items-center gap-3 rounded-xl border border-gray-700/60 bg-gray-800/40 px-3 py-2 text-sm font-semibold text-gray-100 shadow-inner shadow-black/20 transition hover:border-purple-400/40 hover:bg-gray-800/70 whitespace-nowrap" // <-- Added whitespace-nowrap
             >
               <Home className="w-5 h-5" />
               {!isCollapsed && (
@@ -91,9 +100,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                   Back to <span className="text-purple-200">Landing</span>
                 </span>
               )}
-            </Link>
+            </button>
 
-            {/* COLLAPSE BUTTON - ONLY SHOWN ON MD+ */}
             <button
               onClick={onToggleCollapse}
               className="hidden md:flex items-center justify-center rounded-xl border border-gray-700 p-2 text-gray-300 hover:border-gray-500 hover:text-white"

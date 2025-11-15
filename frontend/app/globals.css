@@ -1,4 +1,9 @@
+/*
+ * This is the correct syntax for Tailwind v4
+ */
+
 @import "tailwindcss";
+/* @tailwind components is removed in v4 */
 
 :root {
   --background: #ffffff;
@@ -18,32 +23,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Tailwind rounded utilities need to win over Bootstrap's global button reset */
-.rounded-md {
-  border-radius: 0.375rem !important;
-}
-
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
-
-.rounded-xl {
-  border-radius: 0.75rem !important;
-}
-
-.rounded-2xl {
-  border-radius: 1rem !important;
-}
-
-.rounded-3xl {
-  border-radius: 1.5rem !important;
-}
-
-.rounded-full {
-  border-radius: 9999px !important;
-}
-
-.rounded-t-xl {
-  border-top-left-radius: 0.75rem !important;
-  border-top-right-radius: 0.75rem !important;
-}
+/* * DELETE all the !important rules for .rounded-lg, etc.
+ * They are no longer needed.
+ */

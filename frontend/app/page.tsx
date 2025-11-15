@@ -70,7 +70,7 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-black" />
+        <div className="absolute inset-0 bg-linear-to-b from-slate-950 via-slate-900 to-black" />
         <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-cyan-500/30 blur-[140px]" />
         <div className="absolute right-0 top-32 h-80 w-80 rounded-full bg-fuchsia-500/30 blur-[140px]" />
       </div>
@@ -250,7 +250,7 @@ export default function LandingPage() {
 
           <section
             id="workflow"
-            className="mt-24 rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/60 to-slate-800/60 p-8 backdrop-blur"
+            className="mt-24 rounded-3xl border border-white/10 bg-linear-to-r from-slate-900/60 to-slate-800/60 p-8 backdrop-blur"
           >
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
