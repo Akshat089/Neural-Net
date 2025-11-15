@@ -1,4 +1,18 @@
-## **1. Put the backend URL in `.env`:**
+The imageserver/ hosts a backend service that runs on an L40S Nvidia GPU instance. It generates images based on text prompts using the Stable Diffusion model. It takes care of cold start, and keeping instance warm as its being used.
+
+Hence we can host more models there can require GPU. It is best to pair it with some event orchestration at the frontend to avoid hitting the endpoint as it's running on a paid GPU instance.
+
+Not hosting the image captioning model here as it runs fine on CPU. But it does require memory and might not work with vercel.
+
+BLIP large is too large for vercel, but CPU inference is okay. vit-gpt2 is smaller, but maybe risky to run on vercel, I am not sure.
+
+Either way these models don't require GPU and hosting them in imageserver would cause GPU to be warmed up unnecessarily.
+
+Also SDXL uses plenty VRAM already.
+
+Also, we are caching the models so there is a cache volume, no loading everytime a new container spins up.
+
+## Dev Usage Guide: **1. Put the backend URL in `.env`:**
 
 ```env
 IMAGE_GENERATION="...CANNOT BE PUBLICALLY SHARED..."
@@ -40,3 +54,24 @@ const { file_key, public_url } = await res.json();
 ```
 
 ---
+
+## Using modal
+
+- go to the folder which has the main.py, ie file you want to use for hosting, then
+
+```bash
+modal setup
+```
+
+This will guide you through setting up your modal project.
+
+```bash
+modal run main.py
+```
+
+This will run the local entrypoint function in main.py
+If this is working fine, you can deploy the function to modal cloud using
+
+```bash
+modal deploy main.py
+```
