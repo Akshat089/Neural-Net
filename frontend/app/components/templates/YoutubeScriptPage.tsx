@@ -2,8 +2,7 @@
 import React, { useState, useCallback } from "react";
 import InputCard from "../generate/InputCard";
 import TextInput from "../generate/TextInput";
-import { Lightbulb, Loader2,Download,
-  Image as ImageIcon } from "lucide-react";
+import { Lightbulb, Loader2, Download, Image as ImageIcon } from "lucide-react";
 
 const IMAGE_ENDPOINT =
   process.env.NEXT_PUBLIC_IMAGE_GENERATION ||
@@ -47,177 +46,169 @@ const YoutubeScriptPage: React.FC = () => {
   }, []);
 
   const autoGenerateImagePrompt = useCallback(async () => {
-      setImagePromptLoading(true);
-      setImageError(null);
-      try {
-        const backendUrl = process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL;
-        if (!backendUrl) {
-          throw new Error("Python backend URL is not configured.");
-        }
-        const res = await fetch(`${backendUrl}/image-prompt`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            channelDescription: formData.channelDescription,
-            prompt: formData.prompt,
-            script: result || "",
-            tone: formData.tone,
-            audience: formData.audience,
-          }),
-        });
-        if (!res.ok) {
-          throw new Error(`Prompt helper failed (${res.status})`);
-        }
-        const data = await res.json();
-        const promptText = data.image_prompt || data.prompt;
-        if (!promptText) {
-          throw new Error("No prompt returned by helper.");
-        }
-        setImagePrompt(promptText);
-      } catch (err: any) {
-        console.error("Image prompt helper error:", err);
-        setImageError(
-          err?.message || "Failed to craft image prompt from your content."
-        );
-      } finally {
-        setImagePromptLoading(false);
+    setImagePromptLoading(true);
+    setImageError(null);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL;
+      if (!backendUrl) {
+        throw new Error("Python backend URL is not configured.");
       }
-    }, [
-      formData.channelDescription,
-      formData.prompt,
-      result,
-      formData.tone,
-      formData.audience,
-    ]);
-  
-    const generateImageFromPrompt = useCallback(
-      async (promptText: string) => {
-        if (!promptText.trim()) return null;
-  
-        try {
-          const response = await fetch(IMAGE_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: promptText }),
-          });
-  
-          if (!response.ok) {
-            const message = await response.text();
-            throw new Error(message || `Image API error (${response.status})`);
-          }
-  
-          const payload = await response.json();
-          const fileKey = payload.file_key || payload.fileKey || "";
-          const publicUrl = payload.public_url || payload.publicUrl;
-  
-          if (!publicUrl) {
-            throw new Error("Image service did not return a public URL.");
-          }
-  
-          try {
-            const saveRes = await fetch("/api/generated-images", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-              body: JSON.stringify({
-                prompt: promptText,
-                fileKey,
-                imageUrl: publicUrl,
-              }),
-            });
-  
-            if (!saveRes.ok && saveRes.status === 401) {
-              setImageError("Login required to store generated images.");
-            }
-          } catch (saveErr) {
-            console.error("Failed to save generated image:", saveErr);
-          }
-  
-          return {
-            url: publicUrl,
-            fileKey,
-            prompt: promptText,
-          };
-        } catch (err: any) {
-          console.error("Image generation error:", err);
-          setImageError(
-            err?.message || "Failed to generate image from the provided prompt."
-          );
-          return null;
-        }
-      },
-      []
-    );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setResult(null);
-  setImageError(null);
-  setImageResult(null);
-
-  try {
-    // 1️⃣ Generate the YouTube script
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/generate-youtube-script`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
-    const data = await res.json();
-    const generatedScript = data.generated_script;
-    setResult(generatedScript);
-
-    // 2️⃣ Generate image prompt based on generated script
-    if (generatedScript) {
-      setImagePromptLoading(true);
-      const promptRes = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/image-prompt`, {
+      const res = await fetch(`${backendUrl}/image-prompt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channelDescription: formData.channelDescription,
           prompt: formData.prompt,
-          script: generatedScript,
+          script: result || "",
           tone: formData.tone,
           audience: formData.audience,
         }),
       });
-      const promptData = await promptRes.json();
-      const craftedPrompt = promptData.image_prompt || promptData.prompt;
-      setImagePrompt(craftedPrompt);
-
-      // 3️⃣ Generate the image from prompt
-      const img = await generateImageFromPrompt(craftedPrompt);
-      if (img) setImageResult(img);
-
+      if (!res.ok) {
+        throw new Error(`Prompt helper failed (${res.status})`);
+      }
+      const data = await res.json();
+      const promptText = data.image_prompt || data.prompt;
+      if (!promptText) {
+        throw new Error("No prompt returned by helper.");
+      }
+      setImagePrompt(promptText);
+    } catch (err: any) {
+      console.error("Image prompt helper error:", err);
+      setImageError(
+        err?.message || "Failed to craft image prompt from your content."
+      );
+    } finally {
       setImagePromptLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    setResult("⚠️ Failed to generate script or image");
-    setImagePromptLoading(false);
-  } finally {
-    setLoading(false);
-  }
-};
+  }, [
+    formData.channelDescription,
+    formData.prompt,
+    result,
+    formData.tone,
+    formData.audience,
+  ]);
 
+  const generateImageFromPrompt = useCallback(async (promptText: string) => {
+    if (!promptText.trim()) return null;
+
+    try {
+      const response = await fetch(IMAGE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: promptText }),
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Image API error (${response.status})`);
+      }
+
+      const payload = await response.json();
+      const fileKey = payload.file_key || payload.fileKey || "";
+      const publicUrl = payload.public_url || payload.publicUrl;
+
+      if (!publicUrl) {
+        throw new Error("Image service did not return a public URL.");
+      }
+
+      try {
+        const saveRes = await fetch("/api/generated-images", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            prompt: promptText,
+            fileKey,
+            imageUrl: publicUrl,
+          }),
+        });
+
+        if (!saveRes.ok && saveRes.status === 401) {
+          setImageError("Login required to store generated images.");
+        }
+      } catch (saveErr) {
+        console.error("Failed to save generated image:", saveErr);
+      }
+
+      return {
+        url: publicUrl,
+        fileKey,
+        prompt: promptText,
+      };
+    } catch (err: any) {
+      console.error("Image generation error:", err);
+      setImageError(
+        err?.message || "Failed to generate image from the provided prompt."
+      );
+      return null;
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setResult(null);
+    setImageError(null);
+    setImageResult(null);
+
+    try {
+      // 1️⃣ Generate the YouTube script
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/generate-youtube-script`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+      const data = await res.json();
+      const generatedScript = data.generated_script;
+      setResult(generatedScript);
+
+      // 2️⃣ Generate image prompt based on generated script
+      if (generatedScript) {
+        setImagePromptLoading(true);
+        const promptRes = await fetch(
+          `${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/image-prompt`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              channelDescription: formData.channelDescription,
+              prompt: formData.prompt,
+              script: generatedScript,
+              tone: formData.tone,
+              audience: formData.audience,
+            }),
+          }
+        );
+        const promptData = await promptRes.json();
+        const craftedPrompt = promptData.image_prompt || promptData.prompt;
+        setImagePrompt(craftedPrompt);
+
+        // 3️⃣ Generate the image from prompt
+        const img = await generateImageFromPrompt(craftedPrompt);
+        if (img) setImageResult(img);
+
+        setImagePromptLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setResult("⚠️ Failed to generate script or image");
+      setImagePromptLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <form
       onSubmit={handleSubmit}
       className="p-6 md:p-10 text-white max-w-4xl mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-2">
-        Dashboard / Youtube Script{" "}
-        <span className="text-gray-400 font-normal text-xl">
-          /generate_youtube_script
-        </span>
-      </h1>
-      <p className="text-gray-400 mb-8">
-        Create a script for youtube videos.
-      </p>
+      <h1 className="text-3xl font-bold mb-2">Dashboard / Youtube Script</h1>
+      <p className="text-gray-400 mb-8">Create a script for youtube videos.</p>
 
       <InputCard title="Channel Description">
         <TextInput
@@ -263,33 +254,32 @@ const YoutubeScriptPage: React.FC = () => {
           placeholder="middle aged men"
         />
       </InputCard>
-      
+
       <InputCard title="Video Type">
         <div className="flex gap-4">
-        <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2">
             <input
-                type="radio"
-                name="videoType"
-                value="longform"
-                checked={formData.videoType === "longform"}
-                onChange={(e) => handleChange("videoType", e.target.value)}
+              type="radio"
+              name="videoType"
+              value="longform"
+              checked={formData.videoType === "longform"}
+              onChange={(e) => handleChange("videoType", e.target.value)}
             />
             Longform
-        </label>
+          </label>
 
-        <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2">
             <input
-                type="radio"
-                name="videoType"
-                value="shortform"
-                checked={formData.videoType === "shortform"}
-                onChange={(e) => handleChange("videoType", e.target.value)}
+              type="radio"
+              name="videoType"
+              value="shortform"
+              checked={formData.videoType === "shortform"}
+              onChange={(e) => handleChange("videoType", e.target.value)}
             />
             Shortform
-            </label>
-            </div>
-        </InputCard>
-
+          </label>
+        </div>
+      </InputCard>
 
       <InputCard title="Thread ID (optional)">
         <TextInput
@@ -329,12 +319,11 @@ const YoutubeScriptPage: React.FC = () => {
               )}
             </button>
             <p className="text-xs text-gray-400">
-              The lightbulb uses your brand voice + content brief to craft an SDXL-ready prompt.
+              The lightbulb uses your brand voice + content brief to craft an
+              SDXL-ready prompt.
             </p>
           </div>
-          {imageError && (
-            <p className="text-xs text-red-300">{imageError}</p>
-          )}
+          {imageError && <p className="text-xs text-red-300">{imageError}</p>}
         </div>
       </InputCard>
 
@@ -364,7 +353,8 @@ const YoutubeScriptPage: React.FC = () => {
                 Generated Image
               </h3>
               <p className="text-sm text-gray-400">
-                Prompt: <span className="text-gray-200">{imageResult.prompt}</span>
+                Prompt:{" "}
+                <span className="text-gray-200">{imageResult.prompt}</span>
               </p>
             </div>
             <a

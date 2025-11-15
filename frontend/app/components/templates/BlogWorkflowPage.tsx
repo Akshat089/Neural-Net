@@ -111,64 +111,61 @@ const BlogWorkflowPage: React.FC = () => {
     formData.audience,
   ]);
 
-  const generateImageFromPrompt = useCallback(
-    async (promptText: string) => {
-      if (!promptText.trim()) return null;
+  const generateImageFromPrompt = useCallback(async (promptText: string) => {
+    if (!promptText.trim()) return null;
+
+    try {
+      const response = await fetch(IMAGE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: promptText }),
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Image API error (${response.status})`);
+      }
+
+      const payload = await response.json();
+      const fileKey = payload.file_key || payload.fileKey || "";
+      const publicUrl = payload.public_url || payload.publicUrl;
+
+      if (!publicUrl) {
+        throw new Error("Image service did not return a public URL.");
+      }
 
       try {
-        const response = await fetch(IMAGE_ENDPOINT, {
+        const saveRes = await fetch("/api/generated-images", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: promptText }),
+          credentials: "include",
+          body: JSON.stringify({
+            prompt: promptText,
+            fileKey,
+            imageUrl: publicUrl,
+          }),
         });
 
-        if (!response.ok) {
-          const message = await response.text();
-          throw new Error(message || `Image API error (${response.status})`);
+        if (!saveRes.ok && saveRes.status === 401) {
+          setImageError("Login required to store generated images.");
         }
-
-        const payload = await response.json();
-        const fileKey = payload.file_key || payload.fileKey || "";
-        const publicUrl = payload.public_url || payload.publicUrl;
-
-        if (!publicUrl) {
-          throw new Error("Image service did not return a public URL.");
-        }
-
-        try {
-          const saveRes = await fetch("/api/generated-images", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              prompt: promptText,
-              fileKey,
-              imageUrl: publicUrl,
-            }),
-          });
-
-          if (!saveRes.ok && saveRes.status === 401) {
-            setImageError("Login required to store generated images.");
-          }
-        } catch (saveErr) {
-          console.error("Failed to save generated image:", saveErr);
-        }
-
-        return {
-          url: publicUrl,
-          fileKey,
-          prompt: promptText,
-        };
-      } catch (err: any) {
-        console.error("Image generation error:", err);
-        setImageError(
-          err?.message || "Failed to generate image from the provided prompt."
-        );
-        return null;
+      } catch (saveErr) {
+        console.error("Failed to save generated image:", saveErr);
       }
-    },
-    []
-  );
+
+      return {
+        url: publicUrl,
+        fileKey,
+        prompt: promptText,
+      };
+    } catch (err: any) {
+      console.error("Image generation error:", err);
+      setImageError(
+        err?.message || "Failed to generate image from the provided prompt."
+      );
+      return null;
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,12 +253,7 @@ const BlogWorkflowPage: React.FC = () => {
       onSubmit={handleSubmit}
       className="p-6 md:p-10 text-white max-w-4xl mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-2">
-        Dashboard / Blog Workflow{" "}
-        <span className="text-gray-400 font-normal text-xl">
-          /generate_blog
-        </span>
-      </h1>
+      <h1 className="text-3xl font-bold mb-2">Dashboard / Blog Workflow</h1>
       <p className="text-gray-400 mb-8">
         Create branded multi-platform blog posts using your agent.
       </p>
@@ -319,12 +311,11 @@ const BlogWorkflowPage: React.FC = () => {
               )}
             </button>
             <p className="text-xs text-gray-400">
-              The lightbulb uses your brand voice + content brief to craft an SDXL-ready prompt.
+              The lightbulb uses your brand voice + content brief to craft an
+              SDXL-ready prompt.
             </p>
           </div>
-          {imageError && (
-            <p className="text-xs text-red-300">{imageError}</p>
-          )}
+          {imageError && <p className="text-xs text-red-300">{imageError}</p>}
         </div>
       </InputCard>
 
@@ -427,7 +418,8 @@ const BlogWorkflowPage: React.FC = () => {
                 Generated Image
               </h3>
               <p className="text-sm text-gray-400">
-                Prompt: <span className="text-gray-200">{imageResult.prompt}</span>
+                Prompt:{" "}
+                <span className="text-gray-200">{imageResult.prompt}</span>
               </p>
             </div>
             <a
@@ -450,7 +442,6 @@ const BlogWorkflowPage: React.FC = () => {
           </div>
         </div>
       )}
-
     </form>
   );
 };

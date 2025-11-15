@@ -4,12 +4,12 @@ import Link from "next/link";
 import React from "react";
 import {
   X,
-  CheckCircle,
+  // CheckCircle, // Removed
   Newspaper,
   FileText,
   Home,
   Youtube,
-  Image as ImageIcon,
+  // Image as ImageIcon, // No longer used
   ChevronLeft,
   ChevronRight,
   PanelLeft,
@@ -17,6 +17,9 @@ import {
   PenSquare,
   UserCog,
   AudioLines,
+  RefreshCw, // Added for Repurposer
+  Library, // Added for Image Library
+  Captions, // Added for Visual Post
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,19 +39,30 @@ const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
+  // --- Updated navItems array ---
   const navItems = [
+    // Group 1: Main
     { id: "home", label: "Home", icon: Home },
+
+    // Group 2: Core Creation
     { id: "blog", label: "Blog Workflow", icon: FileText },
     { id: "newsroom", label: "Newsroom", icon: Newspaper },
-    { id: "content", label: "Content Repurposer", icon: CheckCircle },
     { id: "youtube_script", label: "YouTube Script", icon: Youtube },
-    { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
-    { id: "image_library", label: "Image Library", icon: ImageIcon },
-    { id: "visual_post", label: "Visual Post Caption", icon: ImageIcon },
     { id: "x_post", label: "X Post Studio", icon: PenSquare },
+
+    // Group 3: Repurposing
+    { id: "content", label: "Content Repurposer", icon: RefreshCw }, // Changed icon
+    { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
+
+    // Group 4: Media Tools
+    { id: "visual_post", label: "Visual Post Caption", icon: Captions }, // Changed icon
     { id: "text_audio", label: "Text to Audio", icon: AudioLines },
+    { id: "image_library", label: "Image Library", icon: Library }, // Changed icon
+
+    // Group 5: Settings
     { id: "account", label: "Account & Keys", icon: UserCog },
   ];
+  // --- End of updates ---
 
   const router = useRouter();
 
@@ -92,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button
               type="button"
               onClick={handleBackClick}
-              className="flex items-center gap-3 rounded-xl border border-gray-700/60 bg-gray-800/40 px-3 py-2 text-sm font-semibold text-gray-100 shadow-inner shadow-black/20 transition hover:border-purple-400/40 hover:bg-gray-800/70 whitespace-nowrap" // <-- Added whitespace-nowrap
+              className="flex items-center gap-3 rounded-xl border border-gray-700/60 bg-gray-800/40 px-3 py-2 text-sm font-semibold text-gray-100 shadow-inner shadow-black/20 transition hover:border-purple-400/40 hover:bg-gray-800/70 whitespace-nowrap"
             >
               <Home className="w-5 h-5" />
               {!isCollapsed && (

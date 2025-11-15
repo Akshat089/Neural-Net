@@ -114,7 +114,9 @@ const ResultSection: React.FC<{ result: VideoBlogResult }> = ({ result }) => {
       {result.transcript && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-lg font-semibold text-gray-100">Full Transcript</h4>
+            <h4 className="text-lg font-semibold text-gray-100">
+              Full Transcript
+            </h4>
             <ClipboardCopyButton text={result.transcript} />
           </div>
           <pre className="bg-gray-900 rounded-lg p-4 text-gray-300 whitespace-pre-wrap font-mono max-h-[420px] overflow-y-auto">
@@ -147,7 +149,11 @@ const YouTubeBlogPage: React.FC = () => {
     }
 
     const parsedWordCount = parseInt(wordCount.trim(), 10);
-    if (Number.isNaN(parsedWordCount) || parsedWordCount < 200 || parsedWordCount > 2000) {
+    if (
+      Number.isNaN(parsedWordCount) ||
+      parsedWordCount < 200 ||
+      parsedWordCount > 2000
+    ) {
       setError("Word count must be a number between 200 and 2000.");
       return;
     }
@@ -172,7 +178,8 @@ const YouTubeBlogPage: React.FC = () => {
 
       const payload = await response.json().catch(() => null);
       if (!response.ok) {
-        const detail = payload?.detail || "Unable to generate blog for this video.";
+        const detail =
+          payload?.detail || "Unable to generate blog for this video.";
         throw new Error(detail);
       }
 
@@ -200,7 +207,8 @@ const YouTubeBlogPage: React.FC = () => {
           Dashboard / YouTube Blog
         </h1>
         <p className="text-gray-400">
-          Convert any public YouTube video into a structured article directly inside the dashboard.
+          Convert any public YouTube video into a structured article directly
+          inside the dashboard.
         </p>
       </div>
 

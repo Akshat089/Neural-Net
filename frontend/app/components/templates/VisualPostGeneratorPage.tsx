@@ -205,7 +205,9 @@ const VisualPostGeneratorPage: React.FC = () => {
       onSubmit={handleSubmit}
       className="p-6 md:p-10 text-white max-w-4xl mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-8">Visual Content Generator</h1>
+      <h1 className="text-3xl font-bold mb-8">
+        Dashboard / Visual Post Caption
+      </h1>
 
       {/* --- Image Uploader --- */}
       <InputCard title="1. Upload Image" icon={<ImageIcon />}>

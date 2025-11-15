@@ -108,12 +108,7 @@ const NewsRoomWorkflowPage: React.FC = () => {
       onSubmit={handleSubmit}
       className="p-6 md:p-10 text-white max-w-4xl mx-auto"
     >
-      <h1 className="text-3xl font-bold mb-2">
-        Dashboard / NewsRoom Workflow{" "}
-        <span className="text-gray-400 font-normal text-xl">
-          /generate-news-article
-        </span>
-      </h1>
+      <h1 className="text-3xl font-bold mb-2">Dashboard / NewsRoom Workflow</h1>
       <p className="text-gray-400 mb-8">
         Generate a news article on a given topic using your agent.
       </p>

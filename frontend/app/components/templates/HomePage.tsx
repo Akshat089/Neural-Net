@@ -10,6 +10,7 @@ interface StatusState {
   lastChecked: Date | null;
 }
 
+// --- UPDATED FEATURES LIST ---
 const features = [
   {
     title: "Blog Workflow",
@@ -17,9 +18,19 @@ const features = [
       "Multi-modal blog creation with Groq agents, automated revisions, and SDXL-ready imagery.",
   },
   {
-    title: "Newsroom + Content Agents",
+    title: "Newsroom",
     description:
       "Rapid topic exploration and newsroom-style generation pipelines tailored to your audience.",
+  },
+  {
+    title: "Content Repurposer",
+    description:
+      "Feed articles into LangGraph workflows and receive summaries, social posts, FAQs, and entities.",
+  },
+  {
+    title: "YouTube Script Generator",
+    description:
+      "Create engaging, structured video scripts from a simple prompt, complete with tone and audience targeting.",
   },
   {
     title: "YouTube → Blog Composer",
@@ -32,11 +43,22 @@ const features = [
       "SDXL image generations are stored per user with download + cleanup controls.",
   },
   {
-    title: "Content Repurposer",
+    title: "Visual Post Captioner",
     description:
-      "Feed articles into LangGraph workflows and receive summaries, social posts, FAQs, and entities.",
+      "Upload an image and provide context to generate trend-aware social media posts for any platform.",
+  },
+  {
+    title: "X Post Studio",
+    description:
+      "A dedicated workspace for drafting, refining, and generating content specifically for X (formerly Twitter).",
+  },
+  {
+    title: "Text to Audio",
+    description:
+      "Convert your generated blog posts or scripts into high-quality, listenable audio files.",
   },
 ];
+// --- END UPDATED LIST ---
 
 const HomePage: React.FC = () => {
   const [status, setStatus] = useState<StatusState>({
@@ -103,9 +125,10 @@ const HomePage: React.FC = () => {
           Welcome to your multi-agent creative workspace.
         </h1>
         <p className="text-gray-400 text-lg">
-          This dashboard bundles every workflow we&apos;ve delivered so far: blog drafting, newsroom
-          coverage, repurposing pipelines, YouTube summarization, and an SDXL image toolchain—all
-          powered by the FastAPI backend.
+          This dashboard bundles every workflow we&apos;ve delivered so far:
+          blog drafting, newsroom coverage, repurposing pipelines, YouTube
+          summarization, and an SDXL image toolchain—all powered by the FastAPI
+          backend.
         </p>
       </section>
 
@@ -137,7 +160,9 @@ const HomePage: React.FC = () => {
             disabled={status.loading}
             className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm font-semibold transition-colors disabled:opacity-60"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${status.loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${status.loading ? "animate-spin" : ""}`}
+            />
             {status.loading ? "Checking..." : "Refresh status"}
           </button>
         </div>
@@ -148,10 +173,14 @@ const HomePage: React.FC = () => {
             <h2 className="text-xl font-semibold">Getting started</h2>
           </div>
           <ol className="list-decimal list-inside text-gray-300 space-y-1 text-sm">
-            <li>Pick a workflow from the sidebar (Blog, Newsroom, Repurposer, etc.).</li>
+            <li>
+              Pick a workflow from the sidebar (Blog, Newsroom, Repurposer,
+              etc.).
+            </li>
             <li>Fill in the prompts / brand voice and hit Generate.</li>
             <li>
-              Download text or images, then revisit the Image Library to manage historical assets.
+              Download text or images, then revisit the Image Library to manage
+              historical assets.
             </li>
           </ol>
         </div>
@@ -165,7 +194,9 @@ const HomePage: React.FC = () => {
               key={feature.title}
               className="bg-gray-800 border border-gray-700 rounded-xl p-5 space-y-2"
             >
-              <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
+              <h3 className="text-lg font-semibold text-white">
+                {feature.title}
+              </h3>
               <p className="text-gray-400 text-sm">{feature.description}</p>
             </div>
           ))}
