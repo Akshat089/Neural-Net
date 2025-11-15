@@ -39,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "content", label: "Content Repurposer", icon: CheckCircle },
     { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
     { id: "image_library", label: "Image Library", icon: ImageIcon },
+    { id: "visual_post", label: "Visual Post Caption", icon: ImageIcon },
   ];
 
   return (

@@ -17,6 +17,7 @@ import PlaceholderPage from "../components/templates/PlaceholderPage";
 import ContentRepurposerPage from "../components/templates/ContentRepurposerPage";
 import YouTubeBlogPage from "../components/templates/YouTubeBlogPage";
 import HomePage from "../components/templates/HomePage";
+import VisualPostGeneratorPage from "../components/templates/VisualPostGeneratorPage";
 
 // -------------------
 // Auth Context
@@ -79,6 +80,8 @@ const Dashboard: React.FC = () => {
         return <GeneratedImagesPage />;
       case "youtube_blog":
         return <YouTubeBlogPage />;
+      case "visual_post":
+        return <VisualPostGeneratorPage />;
       default:
         return <PlaceholderPage page={currentPage} />;
     }
