@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
         parsedMessage = parsed.detail;
       } else if (Array.isArray(parsed?.detail)) {
         const msgs = parsed.detail
-          .map((item) => {
+          .map((item: any) => {
             if (typeof item === "string") return item;
             if (item && typeof item.msg === "string") return item.msg;
             return null;
