@@ -44,11 +44,12 @@ model GeneratedImage {
 }
 
 model XCredential {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int      @unique
-  apiKeyEncrypted   String
+  id                 Int      @id @default(autoincrement())
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             Int      @unique
+  apiKeyEncrypted    String
   apiSecretEncrypted String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  bearerToken        String?   // <-- added field, optional
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
