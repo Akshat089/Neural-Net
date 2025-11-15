@@ -78,9 +78,8 @@ const Dashboard: React.FC = () => {
         return <NewsRoomWorkflowPage />;
       case "content":
         return <ContentPage />;
-      case "youtube":
+      case "youtube_script":
         return <YoutubeScriptPage />;
-        return <ContentRepurposerPage />;
       case "image_library":
         return <GeneratedImagesPage />;
       case "youtube_blog":
