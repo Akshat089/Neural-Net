@@ -175,7 +175,7 @@ const TextToAudioPage: React.FC = () => {
           </span>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold">
-          Turn short research bullets into cinematic voiceovers.
+          Generate voiceovers for videos, reels and podcasts!
         </h1>
         <p className="text-gray-400 max-w-3xl">
           Draft a 400-character takeaway, pick a preset narrator or bring your
