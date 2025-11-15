@@ -13,6 +13,8 @@ import {
   ChevronRight,
   PanelLeft,
   PanelRight,
+  PenSquare,
+  UserCog,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -40,6 +42,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "youtube_blog", label: "YouTube Blog", icon: Youtube },
     { id: "image_library", label: "Image Library", icon: ImageIcon },
     { id: "visual_post", label: "Visual Post Caption", icon: ImageIcon },
+    { id: "x_post", label: "X Post Studio", icon: PenSquare },
+    { id: "account", label: "Account & Keys", icon: UserCog },
   ];
 
   return (

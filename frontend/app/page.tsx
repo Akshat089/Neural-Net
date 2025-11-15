@@ -84,13 +84,22 @@ export default function LandingPage() {
             Creative Automation (Work in Progress!!)
           </div>
           <nav className="flex flex-wrap items-center gap-6 text-sm text-slate-300">
-            <Link href="#features" className="hover:text-white">
+            <Link
+              href="#features"
+              className="text-slate-300 no-underline hover:text-white transition"
+            >
               Features
             </Link>
-            <Link href="#automation" className="hover:text-white">
+            <Link
+              href="#automation"
+              className="text-slate-300 no-underline hover:text-white transition"
+            >
               Automation
             </Link>
-            <Link href="#workflow" className="hover:text-white">
+            <Link
+              href="#workflow"
+              className="text-slate-300 no-underline hover:text-white transition"
+            >
               Workflows
             </Link>
             <button

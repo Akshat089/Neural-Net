@@ -5,10 +5,7 @@ import TextInput from "../generate/TextInput";
 import ModalitySelector, { Modality } from "../generate/ModalitySelector";
 import { Lightbulb } from "lucide-react";
 
-const ALL_CHANNELS: Modality[] = [
-  { name: "medium" },
-  { name: "linkedin" },
-];
+const ALL_CHANNELS: Modality[] = [{ name: "medium" }, { name: "linkedin" }];
 
 const ContentPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +33,7 @@ const ContentPage: React.FC = () => {
     []
   );
 
-  // 💡 FIX 2: Replaced handleToggleModality with a new handler
+  // FIX 2: Replaced handleToggleModality with a new handler
   const handleSelectionChange = useCallback((selectedNames: string[]) => {
     setFormData((prev) => ({
       ...prev,
@@ -101,7 +98,7 @@ const ContentPage: React.FC = () => {
           placeholder="What should the agent write about?"
         />
       </InputCard>
-      
+
       {/* 💡 FIX 3: Updated ModalitySelector usage */}
       <ModalitySelector
         allChannels={ALL_CHANNELS} // Pass the full list of options
@@ -113,7 +110,7 @@ const ContentPage: React.FC = () => {
         <TextInput
           label=""
           value={formData.tone}
-          onChange={(e) =>( handleChange("tone", e.target.value))}
+          onChange={(e) => handleChange("tone", e.target.value)}
           placeholder="journalistic with a hpeful twist"
         />
       </InputCard>
@@ -122,7 +119,7 @@ const ContentPage: React.FC = () => {
         <TextInput
           label=""
           value={formData.audience}
-          onChange={(e) =>( handleChange("audience", e.target.value))}
+          onChange={(e) => handleChange("audience", e.target.value)}
           placeholder="middle aged women"
         />
       </InputCard>
@@ -131,7 +128,7 @@ const ContentPage: React.FC = () => {
         <TextInput
           label=""
           value={formData.timeframe}
-          onChange={(e) =>( handleChange("timeframe", e.target.value))}
+          onChange={(e) => handleChange("timeframe", e.target.value)}
           placeholder="Eg: Last 48hours"
         />
       </InputCard>

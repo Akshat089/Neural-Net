@@ -7,6 +7,7 @@ from contentRepurposer.router import router as contentRepurposer_router
 from youtubeBlog.router import router as youtube_router
 from health.router import router as health_router
 from visualPostGenerator.router import router as caption_router
+from x_post.router import router as xpost_router
 
 app = FastAPI()
 
@@ -35,3 +36,4 @@ app.include_router(contentRepurposer_router)
 app.include_router(youtube_router)
 app.include_router(health_router)
 app.include_router(caption_router)
+app.include_router(xpost_router)

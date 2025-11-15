@@ -13,10 +13,29 @@ export async function getCurrentUser(token: string) {
 
     const user = await prisma.user.findUnique({
       where: { email: decoded.email },
-      select: { id: true, username: true, email: true },
+      select: { id: true, username: true, email: true, createdAt: true },
     });
 
-    return user;
+    if (!user) return null;
+
+    let hasXCredentials = false;
+    try {
+      const xCredential = await prisma.xCredential.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      hasXCredentials = Boolean(xCredential);
+    } catch (credentialError) {
+      console.warn(
+        "XCredential model unavailable in Prisma client. Run `npx prisma generate` so the split credential table is picked up.",
+        credentialError
+      );
+    }
+
+    return {
+      ...user,
+      hasXCredentials,
+    };
   } catch (err) {
     console.error("Error in getCurrentUser:", err);
     return null;

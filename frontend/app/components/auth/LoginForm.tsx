@@ -18,6 +18,7 @@ export default function LoginForm({ setMessage }: LoginFormProps) {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           action: "login", // ✅ required in the new unified route
           email,

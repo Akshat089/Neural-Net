@@ -18,11 +18,21 @@ import ContentRepurposerPage from "../components/templates/ContentRepurposerPage
 import YouTubeBlogPage from "../components/templates/YouTubeBlogPage";
 import HomePage from "../components/templates/HomePage";
 import VisualPostGeneratorPage from "../components/templates/VisualPostGeneratorPage";
+import XPostWorkflowPage from "../components/templates/XPostWorkflowPage";
+import AccountSettingsPage from "../components/templates/AccountSettingsPage";
 
 // -------------------
 // Auth Context
 // -------------------
-export const AuthContext = createContext<any>(null);
+interface DashboardUser {
+  id: number;
+  username: string;
+  email: string;
+  hasXCredentials?: boolean;
+  createdAt?: string;
+}
+
+export const AuthContext = createContext<DashboardUser | null>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -34,7 +44,7 @@ const Dashboard: React.FC = () => {
   const [currentPage, setCurrentPage] = useState("home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [user, setUser] = useState<any>(null); // Logged-in user info
+  const [user, setUser] = useState<DashboardUser | null>(null); // Logged-in user info
 
   // Route protection & fetch user info
   useEffect(() => {
@@ -66,6 +76,15 @@ const Dashboard: React.FC = () => {
     setIsSidebarCollapsed((prev) => !prev);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    await fetch("/api/logout", { method: "POST" });
+    router.push("/");
+  }, [router]);
+
+  const handleCredentialsChange = useCallback((hasKeys: boolean) => {
+    setUser((prev) => (prev ? { ...prev, hasXCredentials: hasKeys } : prev));
+  }, []);
+
   const renderPage = () => {
     switch (currentPage) {
       case "home":
@@ -82,6 +101,16 @@ const Dashboard: React.FC = () => {
         return <YouTubeBlogPage />;
       case "visual_post":
         return <VisualPostGeneratorPage />;
+      case "x_post":
+        return <XPostWorkflowPage currentUser={user} />;
+      case "account":
+        return (
+          <AccountSettingsPage
+            user={user}
+            onLogout={handleLogout}
+            onCredentialsChange={handleCredentialsChange}
+          />
+        );
       default:
         return <PlaceholderPage page={currentPage} />;
     }
