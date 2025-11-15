@@ -119,7 +119,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start((START)) --> Research[Topic Research (Tavily)]
+    Start((START)) --> Research[Topic Research via Tavily]
     Research --> Draft[Draft Article]
     Draft --> Compliance[Compliance Review]
     Compliance -->|Approved| Finalize[Finalize Package]
@@ -171,8 +171,8 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    Start((START)) --> Caption[Extract Image Caption (Modal)]
-    Start --> Trends[Research Platform Trends (Tavily)]
+    Start((START)) --> Caption[Extract Image Caption via Modal]
+    Start --> Trends[Research Platform Trends via Tavily]
     Caption --> Writer[Generate Platform Post]
     Trends --> Writer
     Writer --> End((END))
