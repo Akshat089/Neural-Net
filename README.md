@@ -64,6 +64,8 @@ You can access all your previous generated voiceovers here. Retrived from object
 
 ![generated images](./assets/s16.png)
 
+Apart from these, we have a page, that can accept content, like text files, and repurpose it. There is also image captioning, where you can drag and drop images, give a prompt and get a caption back. This is done through self hosted nlpconnects vit+gpt2 model.
+
 ## System Highlights
 
 - LangGraph-powered agents for blog creation, newsroom copy, YouTube scripts, multimodal social posts, and content repurposing.
